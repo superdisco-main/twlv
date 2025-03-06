@@ -7,7 +7,7 @@ import json
 import subprocess
 from jockey.thread import session_id
 
-TL_BASE_URL = "https://api.twelvelabs.io/v1.2/"
+TL_BASE_URL = "https://api.twelvelabs.io/v1.3/"
 INDEX_URL = urllib.parse.urljoin(TL_BASE_URL, "indexes/")
 
 
@@ -36,7 +36,7 @@ def download_video(video_id: str, index_id: str, start: float, end: float) -> st
     Should only be used when the user explicitly requests video editing functionalities."""
     headers = {"x-api-key": os.environ["TWELVE_LABS_API_KEY"], "accept": "application/json", "Content-Type": "application/json"}
 
-    video_url = f"https://api.twelvelabs.io/v1.2/indexes/{index_id}/videos/{video_id}"
+    video_url = f"{INDEX_URL}{index_id}/videos/{video_id}"
 
     response = requests.get(video_url, headers=headers)
 
