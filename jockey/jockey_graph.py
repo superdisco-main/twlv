@@ -12,7 +12,7 @@ from langchain.agents import AgentExecutor
 from langgraph.graph import StateGraph, END, add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from jockey.stirrups.video_search import VideoSearchWorker
-from jockey.stirrups.video_text_generation import VideoTextGenerationWorker
+from jockey.stirrups.video_text_generation import VideoTextGenerationWorker, VideoTextGenerationInput
 from jockey.stirrups.video_editing import VideoEditingWorker
 from langgraph.prebuilt import ToolNode
 from jockey.stirrups import collect_all_tools
@@ -85,6 +85,11 @@ class PlannerResponse(BaseModel):
             Input: Index ID, search query, number of clips needed
             Output: List of clips with video IDs and timestamps (start/end in seconds)
         </worker>
+        <worker name="video-text-generation", tools="summarize-text-generation">
+            Purpose: Generate text summaries, highlights, or chapters from videos
+            Input: Index ID, video ID, endpoint option (summary, highlight, chapter)
+            Output: Text content generated from the video
+        </worker>
         <worker name="video-editing", tools="combine-clips">
             Purpose: Edit and combine video clips
             Input: List of video IDs with start/end times
@@ -92,7 +97,7 @@ class PlannerResponse(BaseModel):
         </worker>
         """
     )
-    tool_call: Literal["simple-video-search", "combine-clips", "none"] = Field(
+    tool_call: Literal["simple-video-search", "combine-clips", "summarize-text-generation", "none"] = Field(
         description="""
         Define the tool required by the route_to_node. If no tool is required, use 'none'.
         """
@@ -346,7 +351,11 @@ class Jockey(StateGraph):
         Returns:
             Dict: Updated state of the graph.
         """
-        worker_schemas = {"video-search": MarengoSearchInput, "video-editing": SimplifiedCombineClipsInput}
+        worker_schemas = {
+            "video-search": MarengoSearchInput, 
+            "video-editing": SimplifiedCombineClipsInput,
+            "video-text-generation": VideoTextGenerationInput
+        }
 
         worker_to_stirrup = {
             "video-search": VideoSearchWorker,
@@ -366,8 +375,18 @@ class Jockey(StateGraph):
                 temperature=0.7,
             )
 
-            worker_inputs: Union[MarengoSearchInput, SimplifiedCombineClipsInput] = completion.choices[0].message.parsed
+            worker_inputs: Union[MarengoSearchInput, SimplifiedCombineClipsInput, VideoTextGenerationInput] = completion.choices[0].message.parsed
             # print(f"[DEBUG] Worker inputs: {worker_inputs}")
+            
+            # Convert VideoTextGenerationInput to PegasusSummarizeInput if needed
+            from jockey.stirrups.video_text_generation import PegasusSummarizeInput
+            if state["next_worker"] == "video-text-generation" and isinstance(worker_inputs, VideoTextGenerationInput):
+                worker_inputs = PegasusSummarizeInput(
+                    video_id=worker_inputs.video_id,
+                    index_id=worker_inputs.index_id,
+                    endpoint_option=worker_inputs.endpoint_option,
+                    prompt=worker_inputs.prompt
+                )
         except Exception as error:
             raise error
 
@@ -385,6 +404,13 @@ class Jockey(StateGraph):
             args = worker_inputs.model_dump()
             args["clips"] = [clip for key in state["relevant_clip_keys"] for clip in state["clips_from_search"][key]]
             args["index_id"] = state["index_id"]
+        elif state["next_worker"] == "video-text-generation":
+            # For video-text-generation, we need to use the summarize-text-generation tool
+            args = worker_inputs.model_dump()
+            # Convert endpoint_option to string if it's an enum
+            if "endpoint_option" in args and hasattr(args["endpoint_option"], "value"):
+                args["endpoint_option"] = args["endpoint_option"].value
+            state["tool_call"] = "summarize-text-generation"
 
         if state["tool_call"]:
             ai_message = AIMessage(

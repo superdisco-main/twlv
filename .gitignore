@@ -42,3 +42,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
+/.specstory
+event_log.txt
+/ignore
