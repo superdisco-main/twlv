@@ -17,6 +17,6 @@ services:
     ports:
       - "8001:8000"
     restart: always
-    command: ["tail", "-f", "/dev/null"]
+    command: ["python", "-m", "jockey", "terminal"]
     stdin_open: true
     tty: true
