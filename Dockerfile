@@ -17,11 +17,6 @@ COPY . /app/
 # 필요한 Python 패키지 설치
 RUN pip install --no-cache-dir -r ./jockey/requirements.txt
 
-# 환경 변수 설정 (필요한 경우 수정)
-ENV PYTHONPATH=/app
-ENV HOST_PUBLIC_DIR=/app/public
-ENV LLM_PROVIDER=OPENAI
-
 # 공개 디렉토리 생성
 RUN mkdir -p /app/public
 
