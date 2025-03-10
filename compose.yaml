@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    image: jockey-app
+    environment:
+      - PYTHONPATH=/app
+      - HOST_PUBLIC_DIR=/app/public
+      - LLM_PROVIDER=OPENAI
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - TWELVE_LABS_API_KEY=${TWELVE_LABS_API_KEY}
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+    volumes:
+      - ./public:/app/public
+    ports:
+      - "8000:8000"
