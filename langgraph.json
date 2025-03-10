@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0",
+    "name": "jockey-graph",
+    "description": "Jockey 애플리케이션을 위한 LangGraph 설정",
+    "runtime": {
+      "provider": "local"
+    },
+    "endpoints": {
+      "default": {
+        "runtime": "local"
+      }
+    }
+  }
