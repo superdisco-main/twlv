@@ -1,5 +1,0 @@
-services:
-  langgraph-api:
-    volumes:
-      - ${HOST_PUBLIC_DIR}:/app/public
-      - ${HOST_VECTOR_DB_DIR}:/app/vector_db
