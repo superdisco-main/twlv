@@ -12,11 +12,13 @@ services:
       - TWELVE_LABS_API_KEY=${TWELVE_LABS_API_KEY}
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
       - LANGGRAPH_UI_ENABLED=true
+      - AUTO_START=true
     volumes:
       - ./public:/app/public
+      - ./start.sh:/app/start.sh
     ports:
       - "8001:8000"
     restart: always
-    command: ["python", "-m", "jockey", "terminal"]
+    command: ["/bin/bash", "/app/start.sh"]
     stdin_open: true
     tty: true
