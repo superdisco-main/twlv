@@ -11,6 +11,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - TWELVE_LABS_API_KEY=${TWELVE_LABS_API_KEY}
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+      - LANGGRAPH_UI_ENABLED=true
     volumes:
       - ./public:/app/public
     ports:
@@ -22,4 +23,4 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    command: ["python", "-m", "jockey", "terminal"]
+    command: ["python", "-m", "jockey", "server"]
