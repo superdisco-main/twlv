@@ -4,17 +4,29 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # 모든 환경 변수는 여기서 관리합니다
     environment:
+      # 애플리케이션 설정
       - PYTHONPATH=/app
       - HOST_PUBLIC_DIR=/app/public
       - LLM_PROVIDER=OPENAI
+      
+      # API 키 (보안을 위해 환경 변수에서 가져옵니다)
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - TWELVE_LABS_API_KEY=${TWELVE_LABS_API_KEY}
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+    
+    # 볼륨 마운트
     volumes:
       - ./public:/app/public
+    
+    # 포트 매핑 (호스트:컨테이너)
     ports:
       - "8001:8000"
+    
+    # 컨테이너 재시작 정책
     restart: always
+    
+    # 터미널 모드 활성화
     stdin_open: true
     tty: true
