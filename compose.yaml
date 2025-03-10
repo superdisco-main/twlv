@@ -15,10 +15,8 @@ services:
       - AUTO_START=true
     volumes:
       - ./public:/app/public
-      - ./start.sh:/app/start.sh
     ports:
       - "8001:8000"
     restart: always
-    command: ["/bin/bash", "/app/start.sh"]
     stdin_open: true
     tty: true
