@@ -45,3 +45,5 @@ yarn-error.log*
 /.specstory
 event_log.txt
 /ignore
+graph.png
+event_log.txt
