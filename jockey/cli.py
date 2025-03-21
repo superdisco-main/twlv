@@ -24,6 +24,12 @@ async def run_jockey_terminal():
             # Get initial user input
             console.print()
             user_input = console.input("[green]👤 Chat: ")
+            
+            # Check for exit command
+            if user_input.strip().lower() == "exit":
+                console.print("\n[yellow]Exiting Jockey terminal...[/yellow]")
+                sys.exit(0)
+                
             if not user_input.strip():
                 user_input = "find 2 dunking videos in the index 670514a1e5620307b898b0c5"
                 print(user_input)
