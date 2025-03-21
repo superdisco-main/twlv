@@ -10,10 +10,10 @@ alwaysApply: false
 Before running the solution, ensure that a `.env` file exists at the root directory with the following variables:
 
 ```
-LANGSMITH_API_KEY=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
-OPENAI_API_KEY=sk-proj-UHh2aZRqqCQzTZGIRj2mT3BlbkFJdzszxDrkVKQuBW7GIYHU
-LLM_PROVIDER=OPENAI
-TWELVE_LABS_API_KEY=tlk_21TFW0T0M82KCX2QCAJPM33TYKEB
+LANGSMITH_API_KEY=
+OPENAI_API_KEY=
+LLM_PROVIDER=
+TWELVE_LABS_API_KEY=
 HOST_PUBLIC_DIR=
 ```
 
